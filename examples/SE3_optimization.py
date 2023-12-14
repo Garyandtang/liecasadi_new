@@ -16,6 +16,7 @@ class SE3Optimization:
         self.nTraj = 100
 
     def solve(self, start_pos, start_quat, end_pos, end_quat):
+        start_time = time.time()
         opti = ca.Opti()
 
         pos = opti.variable(self.nPos, self.nTraj + 1)
@@ -51,7 +52,8 @@ class SE3Optimization:
 
         pos_sol = sol.value(pos)
         quat_sol = sol.value(quat)
-
+        end_time = time.time()
+        print("time: ", end_time - start_time)
         return pos_sol, quat_sol
 
 def main():
