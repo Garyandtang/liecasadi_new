@@ -41,10 +41,20 @@ manifSE2 = manifpy.SE2(x, y, theta)
 mySE2_1 = SE2.from_x_y_theta(x1, y1, theta1)
 manifSE2_1 = manifpy.SE2(x1, y1, theta1)
 
-# # SE2Tangent objects
-# vec = (np.random.rand(3) - 0.5) * 2 * np.pi
-# mySE2Tang = SE2Tangent(vec)
-# manifSE2Tang = manifpy.SE2Tangent(vec)
+# SE2Tangent objects
+vec = (np.random.rand(3) - 0.5) * 2 * np.pi
+mySE2Tang = SE2Tangent(vec)
+manifSE2Tang = manifpy.SE2Tangent(vec)
+
+vec1 = (np.random.rand(3) - 0.5) * 2 * np.pi
+mySE2Tang1 = SE2Tangent(vec1)
+manifSE2Tang1 = manifpy.SE2Tangent(vec1)
+
+# scalar generation
+scalar = (np.random.rand(1) - 0.5) * 5
+scalar = scalar[0]
+
+
 #
 # SE2 matrix
 matrix = np.array([[np.cos(theta), -np.sin(theta), x],
@@ -83,3 +93,13 @@ def test_SE2_Matrix_init():
     assert mySE2_matrix.as_matrix() - manifSE2.transform() == pytest.approx(0.0, abs=1e-4)
     assert mySE2_matrix.transform() - manifSE2.transform() == pytest.approx(0.0, abs=1e-4)
     assert mySE2_matrix.as_matrix() - matrix == pytest.approx(0.0, abs=1e-4)
+
+def test_SE2Tang():
+    assert mySE2Tang.vec - manifSE2Tang.coeffs() == pytest.approx(0.0, abs=1e-4)
+    assert (mySE2Tang + mySE2Tang1).vec - (manifSE2Tang + manifSE2Tang1).coeffs() == pytest.approx(0.0, abs=1e-4)
+    assert (mySE2Tang - mySE2Tang1).vec - (manifSE2Tang - manifSE2Tang1).coeffs() == pytest.approx(0.0, abs=1e-4)
+    assert (mySE2Tang * scalar).vec - (manifSE2Tang * scalar).coeffs() == pytest.approx(0.0, abs=1e-4)
+
+def test_SE2Tang_exp():
+    assert mySE2Tang.exp().as_matrix() - manifSE2Tang.exp().transform() == pytest.approx(0.0, abs=1e-4)
+

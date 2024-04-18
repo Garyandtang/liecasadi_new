@@ -61,8 +61,8 @@ class SE2:
         # https://github.com/artivis/manif/blob/devel/include/manif/impl/se2/SE2_base.h
         so2 = SO2(self.data[2:])
         theta = so2.as_euler()
-        theta_cos = self.data[2]
-        theta_sin = self.data[3]
+        cos_theta = self.data[2]
+        sin_theta = self.data[3]
         theta_sq = theta * theta
         if theta_sq < 1e-10:
             # Taylor expansion
@@ -70,8 +70,8 @@ class SE2:
             B = 0.5 * theta - (1. / 24.) * theta * theta_sq
         else:
             # Euler's formula
-            A = theta_sin / theta
-            B = (1 - theta_cos) / theta
+            A = sin_theta / theta
+            B = (1 - cos_theta) / theta
 
         den = 1 / (A * A + B * B)
         A = A * den
@@ -107,13 +107,22 @@ class SE2Tangent:
 
     def exp(self) -> SE2:
         theta = self.vec[2]
-        so2 = SO2Tangent(vec=self.vec[2:4])
-        so2_exp = so2.exp()
-        J = cs.vertcat(
-            cs.horzcat(so2_exp.data[1], -so2_exp.data[0], 0),
-            cs.horzcat(0, 0, 1)
-        )
-        return SE2(data=J @ self.vec)
+        cos_theta = cs.cos(theta)
+        sin_theta = cs.sin(theta)
+        theta_sq = theta * theta
+        if theta_sq < 1e-10:
+            # Taylor expansion
+            A = 1. - theta_sq / 6.
+            B = 0.5 * theta - (1. / 24.) * theta * theta_sq
+        else:
+            # Euler's formula
+            A = sin_theta / theta
+            B = (1 - cos_theta) / theta
+        vec = cs.vertcat(A * self.vec[0] - B * self.vec[1],
+                         B * self.vec[0] + A * self.vec[1],
+                         cos_theta,
+                         sin_theta)
+        return SE2(data=vec)
 
     def __add__(self, other) -> "SE2Tangent":
         assert isinstance(other, SE2Tangent)
