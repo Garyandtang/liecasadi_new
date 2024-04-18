@@ -19,6 +19,10 @@ vec = vec[0]
 mySO2Tang = SO2Tangent(vec)
 manifSO2Tang = manifpy.SO2Tangent(vec)
 
+# SO2 matrix
+matrix = np.array([[np.cos(theta), -np.sin(theta)],
+                   [np.sin(theta), np.cos(theta)]])
+mySO2Matrix = SO2.from_matrix(matrix)
 
 def test_SO2_Euler_init():
     assert mySO2Euler.as_euler() - theta == pytest.approx(0.0, abs=1e-4)
@@ -26,11 +30,6 @@ def test_SO2_Euler_init():
     assert mySO2Euler.as_matrix() - manifSO2.rotation() == pytest.approx(0.0, abs=1e-4)
     assert mySO2Euler.as_euler() - manifSO2.angle() == pytest.approx(0.0, abs=1e-4)
 
-
-# SO2 matrix
-matrix = np.array([[np.cos(theta), -np.sin(theta)],
-                   [np.sin(theta), np.cos(theta)]])
-mySO2Matrix = SO2.from_matrix(matrix)
 def test_SO2_Matrix_init():
     assert mySO2Matrix.as_matrix() - manifSO2.rotation() == pytest.approx(0.0, abs=1e-4)
     assert mySO2Matrix.as_euler() - manifSO2.angle() == pytest.approx(0.0, abs=1e-4)
