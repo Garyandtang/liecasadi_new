@@ -64,7 +64,7 @@ class SE2:
         cos_theta = self.data[2]
         sin_theta = self.data[3]
         theta_sq = theta * theta
-        if theta_sq < 1e-10:
+        if False:
             # Taylor expansion
             A = 1. - theta_sq / 6.
             B = 0.5 * theta - (1. / 24.) * theta * theta_sq
@@ -110,7 +110,7 @@ class SE2Tangent:
         cos_theta = cs.cos(theta)
         sin_theta = cs.sin(theta)
         theta_sq = theta * theta
-        if theta_sq < 1e-10:
+        if False:
             # Taylor expansion
             A = 1. - theta_sq / 6.
             B = 0.5 * theta - (1. / 24.) * theta * theta_sq
